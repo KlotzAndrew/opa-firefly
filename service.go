@@ -13,7 +13,8 @@ import (
 )
 
 type user struct {
-	UserID string `json:"userId"`
+	UserID    string   `json:"userId"`
+	Employees []string `json:"employees"`
 }
 
 type opaResult struct {
@@ -24,7 +25,7 @@ type opaResponse struct {
 	Result opaResult `json:"result"`
 }
 
-func getUser(c echo.Context) error {
+func getAccount(c echo.Context) error {
 	// id := c.Param("id")
 
 	allow := authz(c)
@@ -43,6 +44,7 @@ func authz(c echo.Context) bool {
 	fmt.Println(u)
 
 	userID := u.UserID
+	employees := u.Employees
 	method := c.Request().Method
 	url := c.Request().URL.Path
 
@@ -53,9 +55,10 @@ func authz(c echo.Context) bool {
 	}
 	values := map[string]map[string]interface{}{
 		"input": {
-			"user":   userID,
-			"method": method,
-			"path":   path,
+			"user":      userID,
+			"method":    method,
+			"path":      path,
+			"employees": employees,
 		},
 	}
 	fmt.Println(values)
@@ -86,6 +89,6 @@ func main() {
 		return c.String(http.StatusOK, "Hello, World!")
 	})
 
-	e.GET("/users/:id", getUser)
+	e.GET("/accounts/:id", getAccount)
 	e.Logger.Fatal(e.Start(":1323"))
 }

@@ -5,4 +5,6 @@ curl -X PUT --data-binary @users.rego \
 
 ```bash
 curl -H "JWT: {\"userId\": \"a\"}" http://0.0.0.0:1323/users/123
+
+curl -H "JWT: {\"userId\": \"a\", \"employees\": [\"c\"]}" http://0.0.0.0:1323/accounts/b
 ```
