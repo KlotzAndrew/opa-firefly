@@ -13,16 +13,12 @@ import (
 )
 
 type user struct {
-	UserID    string   `json:"userId"`
+	UserID    string   `json:"userID"`
 	Employees []string `json:"employees"`
 }
 
-type opaResult struct {
-	Allow bool `json:"allow"`
-}
-
 type opaResponse struct {
-	Result opaResult `json:"result"`
+	Result map[string]bool `json:"result"`
 }
 
 func getAccount(c echo.Context) error {
@@ -48,20 +44,22 @@ func authz(c echo.Context) bool {
 	method := c.Request().Method
 	url := c.Request().URL.Path
 
-	path := strings.Split(url, "/")
+	tmppath := strings.TrimSpace(url)
+	path := strings.Split(tmppath, "/")
 	fmt.Println(path)
 	if path[0] == "/" || path[0] == "" {
 		path = path[1:]
 	}
 	values := map[string]map[string]interface{}{
 		"input": {
-			"user":      userID,
+			"userID":    userID,
 			"method":    method,
 			"path":      path,
 			"employees": employees,
 		},
 	}
 	fmt.Println(values)
+	fmt.Println("PATH0: ", path[0])
 
 	jsonValue, _ := json.Marshal(values)
 
@@ -80,7 +78,14 @@ func authz(c echo.Context) bool {
 		panic(errj)
 	}
 
-	return opaResp.Result.Allow
+	fmt.Println(opaResp)
+
+	for _, v := range opaResp.Result {
+		if v == true {
+			return true
+		}
+	}
+	return false
 }
 
 func main() {
