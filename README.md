@@ -1,3 +1,5 @@
+![opa admin](opa-admin.png "OPA Admin")
+
 ```bash
 # setup support services
 docker-compose up
