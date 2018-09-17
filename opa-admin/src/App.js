@@ -29,7 +29,11 @@ class App extends Component {
     var res = [];
     this.state.policies.forEach(p => {
       const rawData = this.state.polcyData[p]
-      res.push(<Policy key={p} title={p} rawData={rawData} />)
+      res.push(<Policy
+        key={p}
+        title={p}
+        rawData={rawData}
+        refresh={this.getActivePolicies} />)
     })
     return res
   }
@@ -38,17 +42,10 @@ class App extends Component {
     axios.create({baseURL: `http://0.0.0.0:8100/v1/policies`})
       .get()
       .then(r =>{
-        console.log(r)
           let res = {}
-          r.data.result.forEach(p => {
-            res[p.id] = p.raw
-          })
+          r.data.result.forEach(p => res[p.id] = p.raw)
 
-          this.setState((prevState, props) => ({
-            polcyData: res,
-          }));
-
-          console.log(res)
+          this.setState((prevState, props) => ({polcyData: res}));
       })
   }
 
@@ -61,14 +58,10 @@ class App extends Component {
 
         let res = []
         found.forEach(p => {
-          if (!p.includes("_test") && !res.includes(p)) {
-            res.push(p)
-          }
+          if (!p.includes("_test") && !res.includes(p)) res.push(p);
         })
 
-        this.setState((prevState, props) => ({
-          policies: res,
-        }));
+        this.setState((prevState, props) => ({policies: res}));
       })
   }
 }
