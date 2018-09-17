@@ -20,7 +20,16 @@ type opaResponse struct {
 	Result map[string]bool `json:"result"`
 }
 
-func authz(c echo.Context) bool {
+func authz(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		if isAuthorized(c) {
+			return next(c)
+		}
+		return echo.NewHTTPError(http.StatusUnauthorized, "Please provide valid credentials")
+	}
+}
+
+func isAuthorized(c echo.Context) bool {
 	u := unmarshalUser(c.Request().Header.Get("JWT"))
 
 	values := map[string]map[string]interface{}{
@@ -54,7 +63,7 @@ func unmarshalUser(jwt string) user {
 func checkAuthz(values map[string]map[string]interface{}) opaResponse {
 	jsonValue, _ := json.Marshal(values)
 
-	opaURL := "http://localhost:8181/v1/data/httpapi/authz"
+	opaURL := "http://0.0.0.0:8181/v1/data/httpapi/authz"
 	resp, errp := http.Post(opaURL, "application/json", bytes.NewBuffer(jsonValue))
 	if errp != nil {
 		panic(errp)

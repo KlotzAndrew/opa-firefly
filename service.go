@@ -2,15 +2,12 @@ package main
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/labstack/echo"
 )
 
 func getAccount(c echo.Context) error {
-	allow := authz(c)
-
-	return c.String(http.StatusOK, strconv.FormatBool(allow))
+	return echo.NewHTTPError(http.StatusOK, "All good!")
 }
 
 func main() {
@@ -18,5 +15,8 @@ func main() {
 
 	e.GET("/accounts/:id", getAccount)
 	e.GET("/rewards/:id/redeem", getAccount)
+
+	e.Use(authz)
+
 	e.Logger.Fatal(e.Start(":1323"))
 }
