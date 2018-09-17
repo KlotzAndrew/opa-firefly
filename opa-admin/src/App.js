@@ -1,40 +1,59 @@
 import React, { Component } from 'react';
 import './App.css';
 
+import Policy from './Policy';
+
 import axios from 'axios'
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {policies: []};
+    this.state = {policies: [], polcyData: {}};
   }
 
   componentWillMount() {
     this.getPolicies();
+    this.getActivePolicies();
   }
 
   render() {
     return (
       <div className="App">
         { this.listPolicies() }
+        { this.setState.polcyData }
       </div>
     );
   }
 
   listPolicies = () => {
-    var res = []
+    var res = [];
     this.state.policies.forEach(p => {
-      res.push(<div key={p}>
-        <div>{p}</div>
-      </div>)
+      const rawData = this.state.polcyData[p]
+      res.push(<Policy key={p} title={p} rawData={rawData} />)
     })
     return res
   }
 
-  getPolicies = () => {
-    let axiosInstance = axios.create({baseURL: `http://0.0.0.0:8000`});
+  getActivePolicies = () => {
+    axios.create({baseURL: `http://0.0.0.0:8100/v1/policies`})
+      .get()
+      .then(r =>{
+        console.log(r)
+          let res = {}
+          r.data.result.forEach(p => {
+            res[p.id] = p.raw
+          })
 
-    axiosInstance
+          this.setState((prevState, props) => ({
+            polcyData: res,
+          }));
+
+          console.log(res)
+      })
+  }
+
+  getPolicies = () => {
+    axios.create({baseURL: `http://0.0.0.0:8101`})
       .get("")
       .then(resp => {
         var regex = /\w+(.rego)/g;
