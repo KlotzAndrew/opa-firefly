@@ -1,11 +1,11 @@
 ![opa admin](opa-admin.png "OPA Admin")
 
 ```bash
-# setup support services
+# setup opa & support services
 docker-compose up
 
 # setup working service
-go run service.go authz.go
+go run main.go authz-middleware.go
 
 # setup frontend
 cd opa-admin && npm start
