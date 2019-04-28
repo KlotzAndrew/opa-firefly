@@ -2,8 +2,6 @@ version: '2'
 services:
   opa:
     image: openpolicyagent/opa:0.9.1
-    ports:
-      - 8181:8181
     command:
       - "run"
       - "--server"
@@ -14,14 +12,12 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
     ports:
-      - 8100:8100
-      - 8101:8101
+      - 8000:8000
+      - 8181:8181
     restart: always
 
   filesys:
     image: python:2.7
-    ports:
-      - 8000:8000
     volumes:
       - ./policies:/usr/src
     command: bash -c "cd /usr/src && python -m SimpleHTTPServer"
