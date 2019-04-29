@@ -59,17 +59,17 @@ class Policy extends Component {
     }
 
     onPolicy = () => {
-        axios.create({baseURL: `http://0.0.0.0:8101/`})
+        axios.create({baseURL: `http://0.0.0.0:8000/`})
             .get(this.props.title)
             .then(r => {
-                axios.create({baseURL: `http://0.0.0.0:8100/v1/policies/`})
+                axios.create({baseURL: `http://0.0.0.0:8181/v1/policies/`})
                     .put(this.props.title, r.data)
                     .then(() => this.props.refresh())
             })
     }
 
     offPolicy = () => {
-        axios.create({baseURL: `http://0.0.0.0:8100/v1/policies/`})
+        axios.create({baseURL: `http://0.0.0.0:8181/v1/policies/`})
             .delete(this.props.title)
             .then(() => this.props.refresh())
     }

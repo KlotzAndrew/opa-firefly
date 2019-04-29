@@ -32,7 +32,7 @@ func authz(next echo.HandlerFunc) echo.HandlerFunc {
 func isAuthorized(c echo.Context) bool {
 	u := unmarshalUser(c.Request().Header.Get("JWT"))
 
-	values := map[string]map[string]interface{}{
+	authzRequestPayload := map[string]map[string]interface{}{
 		"input": {
 			"userID":    u.UserID,
 			"method":    c.Request().Method,
@@ -42,7 +42,7 @@ func isAuthorized(c echo.Context) bool {
 		},
 	}
 
-	response := checkAuthz(values)
+	response := checkAuthz(authzRequestPayload)
 
 	for _, v := range response.Result {
 		if v == true {
@@ -61,9 +61,12 @@ func unmarshalUser(jwt string) user {
 }
 
 func checkAuthz(values map[string]map[string]interface{}) opaResponse {
-	jsonValue, _ := json.Marshal(values)
+	jsonValue, errm := json.Marshal(values)
+	if errm != nil {
+		panic(errm)
+	}
 
-	opaURL := "http://0.0.0.0:8181/v1/data/httpapi/authz"
+	opaURL := "http://localhost:8181/v1/data/httpapi/authz"
 	resp, errp := http.Post(opaURL, "application/json", bytes.NewBuffer(jsonValue))
 	if errp != nil {
 		panic(errp)

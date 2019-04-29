@@ -39,7 +39,7 @@ class App extends Component {
   }
 
   getActivePolicies = () => {
-    axios.create({baseURL: `http://0.0.0.0:8100/v1/policies`})
+    axios.create({baseURL: `http://0.0.0.0:8181/v1/policies`})
       .get()
       .then(r =>{
           let res = {}
@@ -50,7 +50,7 @@ class App extends Component {
   }
 
   getPolicies = () => {
-    axios.create({baseURL: `http://0.0.0.0:8101`})
+    axios.create({baseURL: `http://0.0.0.0:8000`})
       .get("")
       .then(resp => {
         var regex = /\w+(.rego)/g;
